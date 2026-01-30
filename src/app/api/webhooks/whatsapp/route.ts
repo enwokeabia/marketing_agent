@@ -3,7 +3,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { parseIntent, validateIntent } from '@/lib/agents/intentParser';
 import { runAgent } from '@/lib/agents/orchestrator';
-import { processConversationReply, createNewCampaignContext } from '@/lib/agents/conversationManager';
+import { processConversationReply } from '@/lib/agents/conversationManager';
 import { sendWhatsAppMessage } from '@/lib/integrations/whatsapp';
 
 // ============================================

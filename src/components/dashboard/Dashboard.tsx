@@ -60,13 +60,13 @@ export function Dashboard({ campaigns, overallStats }: DashboardProps) {
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={overallStats.performanceData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
                 <XAxis dataKey="name" tick={{ fontSize: 12 }} />
                 <YAxis tick={{ fontSize: 12 }} />
                 <Tooltip 
                   contentStyle={{ 
-                    backgroundColor: 'rgba(255,255,255,0.80)',
-                    border: '1px solid rgba(20,18,15,0.14)',
+                    backgroundColor: 'var(--surface-solid)',
+                    border: '1px solid var(--border-2)',
                     borderRadius: '8px',
                   }}
                 />
@@ -119,7 +119,7 @@ export function Dashboard({ campaigns, overallStats }: DashboardProps) {
 
       {/* Campaign List */}
       <div className="surface rounded-3xl overflow-hidden">
-        <div className="px-6 py-4 border-b border-[var(--border)] bg-[color:rgba(20,18,15,0.03)]">
+        <div className="px-6 py-4 border-b border-[var(--border)] bg-[color:var(--wash)]">
           <h2 className="font-display text-xl">Recent Campaigns</h2>
         </div>
         <div className="divide-y divide-[var(--border)]">
@@ -147,7 +147,7 @@ function StatCard({ icon: Icon, label, value, color }: StatCardProps) {
   const colorClasses = {
     blue: 'bg-[color:rgba(152,255,44,0.14)] text-[color:var(--accent-ink)] border-[color:rgba(152,255,44,0.22)]',
     green: 'bg-[color:rgba(255,176,32,0.14)] text-[color:var(--foreground)] border-[color:rgba(255,176,32,0.22)]',
-    purple: 'bg-[color:rgba(20,18,15,0.06)] text-[color:var(--foreground)] border-[var(--border)]',
+    purple: 'bg-[color:var(--wash-2)] text-[color:var(--foreground)] border-[var(--border)]',
     orange: 'bg-[color:rgba(255,59,48,0.10)] text-[color:var(--foreground)] border-[color:rgba(255,59,48,0.16)]',
   };
 
@@ -172,7 +172,7 @@ interface CampaignRowProps {
 
 function CampaignRow({ campaign }: CampaignRowProps) {
   const statusColors: Record<string, string> = {
-    draft: 'bg-[color:rgba(20,18,15,0.06)] text-[color:var(--foreground)]/80 border-[var(--border)]',
+    draft: 'bg-[color:var(--wash-2)] text-[color:var(--foreground)]/80 border-[var(--border)]',
     active: 'bg-[color:rgba(152,255,44,0.12)] text-[color:var(--foreground)] border-[color:rgba(152,255,44,0.20)]',
     paused: 'bg-[color:rgba(255,176,32,0.14)] text-[color:var(--foreground)] border-[color:rgba(255,176,32,0.22)]',
     completed: 'bg-[color:rgba(152,255,44,0.10)] text-[color:var(--foreground)] border-[color:rgba(152,255,44,0.18)]',
@@ -184,10 +184,10 @@ function CampaignRow({ campaign }: CampaignRowProps) {
   };
 
   return (
-    <div className="px-6 py-4 hover:bg-[color:rgba(20,18,15,0.03)] transition-colors">
+    <div className="px-6 py-4 hover:bg-[color:var(--wash)] transition-colors">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <div className="w-10 h-10 rounded-2xl border border-[var(--border)] bg-[color:rgba(20,18,15,0.06)] flex items-center justify-center text-[color:var(--foreground)] font-medium shadow-[0_10px_28px_rgba(20,18,15,0.10)]">
+          <div className="w-10 h-10 rounded-2xl border border-[var(--border)] bg-[color:var(--wash-2)] flex items-center justify-center text-[color:var(--foreground)] font-medium shadow-[var(--shadow-2)]">
             {campaign.name.charAt(0)}
           </div>
           <div>
@@ -221,7 +221,7 @@ function CampaignRow({ campaign }: CampaignRowProps) {
             <p className="text-xs muted">Reply Rate</p>
           </div>
           
-          <button className="focus-ring px-4 py-2 text-sm text-[color:var(--foreground)]/85 hover:bg-[color:rgba(20,18,15,0.06)] rounded-xl font-medium transition-colors">
+          <button className="focus-ring px-4 py-2 text-sm text-[color:var(--foreground)]/85 hover:bg-[color:var(--wash-2)] rounded-xl font-medium transition-colors">
             View Details
           </button>
         </div>

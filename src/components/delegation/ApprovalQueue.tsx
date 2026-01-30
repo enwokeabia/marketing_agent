@@ -194,13 +194,13 @@ function MessageCard({
     >
       {/* Header */}
       <div 
-        className="flex items-center justify-between p-4 cursor-pointer rounded-t-2xl hover:bg-[color:rgba(20,18,15,0.03)]"
+        className="flex items-center justify-between p-4 cursor-pointer rounded-t-2xl hover:bg-[color:var(--wash)]"
         onClick={onToggleExpand}
       >
         <div className="flex items-center gap-4">
           {/* Target Info */}
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl border border-[var(--border)] bg-[color:rgba(20,18,15,0.06)] flex items-center justify-center text-[color:var(--foreground)] font-medium shadow-[0_10px_28px_rgba(20,18,15,0.10)]">
+            <div className="w-10 h-10 rounded-2xl border border-[var(--border)] bg-[color:var(--wash-2)] flex items-center justify-center text-[color:var(--foreground)] font-medium shadow-[var(--shadow-2)]">
               {target.name.charAt(0)}
             </div>
             <div>
@@ -217,7 +217,7 @@ function MessageCard({
           </div>
           
           {/* Channel Badge */}
-          <div className="px-3 py-1 bg-[color:rgba(20,18,15,0.06)] border border-[var(--border)] rounded-full text-xs font-medium text-[color:var(--foreground)]/75 capitalize">
+          <div className="px-3 py-1 bg-[color:var(--wash-2)] border border-[var(--border)] rounded-full text-xs font-medium text-[color:var(--foreground)]/75 capitalize">
             {message.channel}
           </div>
         </div>
@@ -263,7 +263,7 @@ function MessageCard({
 
             {/* Personalization Details */}
             {message.personalization && (
-              <div className="mt-4 p-4 bg-[color:rgba(20,18,15,0.04)] border border-[var(--border)] rounded-xl">
+              <div className="mt-4 p-4 bg-[color:var(--wash)] border border-[var(--border)] rounded-xl">
                 <h4 className="text-xs font-medium muted uppercase tracking-[0.18em] mb-3">
                   Personalization Points
                 </h4>
@@ -279,7 +279,7 @@ function MessageCard({
                     </span>
                   )}
                   {message.personalization.locationSpecific && (
-                    <span className="px-2.5 py-1 bg-[color:rgba(20,18,15,0.06)] text-[color:var(--foreground)] rounded-full text-xs border border-[var(--border)]">
+                    <span className="px-2.5 py-1 bg-[color:var(--wash-2)] text-[color:var(--foreground)] rounded-full text-xs border border-[var(--border)]">
                       Location Specific
                     </span>
                   )}
@@ -289,7 +289,7 @@ function MessageCard({
                     </span>
                   )}
                   {message.personalization.customHooks.map((hook, i) => (
-                    <span key={i} className="px-2.5 py-1 bg-[color:rgba(20,18,15,0.06)] text-[color:var(--foreground)]/80 rounded-full text-xs border border-[var(--border)]">
+                    <span key={i} className="px-2.5 py-1 bg-[color:var(--wash-2)] text-[color:var(--foreground)]/80 rounded-full text-xs border border-[var(--border)]">
                       {hook}
                     </span>
                   ))}
@@ -299,11 +299,11 @@ function MessageCard({
           </div>
 
           {/* Actions */}
-          <div className="flex items-center justify-between p-4 bg-[color:rgba(20,18,15,0.03)] border-t border-[var(--border)] rounded-b-2xl">
+          <div className="flex items-center justify-between p-4 bg-[color:var(--wash)] border-t border-[var(--border)] rounded-b-2xl">
             <div className="flex gap-2">
               <button
                 onClick={onCopy}
-                className="focus-ring flex items-center gap-1.5 px-3 py-1.5 text-sm text-[color:var(--foreground)]/80 hover:text-[color:var(--foreground)] hover:bg-[color:rgba(20,18,15,0.06)] rounded-xl transition-colors"
+                className="focus-ring flex items-center gap-1.5 px-3 py-1.5 text-sm text-[color:var(--foreground)]/80 hover:text-[color:var(--foreground)] hover:bg-[color:var(--wash-2)] rounded-xl transition-colors"
               >
                 {isCopied ? (
                   <>
@@ -323,7 +323,7 @@ function MessageCard({
                   href={target.website}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="focus-ring flex items-center gap-1.5 px-3 py-1.5 text-sm text-[color:var(--foreground)]/80 hover:text-[color:var(--foreground)] hover:bg-[color:rgba(20,18,15,0.06)] rounded-xl transition-colors"
+                  className="focus-ring flex items-center gap-1.5 px-3 py-1.5 text-sm text-[color:var(--foreground)]/80 hover:text-[color:var(--foreground)] hover:bg-[color:var(--wash-2)] rounded-xl transition-colors"
                 >
                   <ExternalLink className="w-4 h-4" />
                   <span>Visit Website</span>
@@ -347,7 +347,7 @@ function MessageCard({
                     <>
                       <button
                         onClick={onCancelEdit}
-                        className="focus-ring px-4 py-2 text-sm text-[color:var(--foreground)]/75 hover:bg-[color:rgba(20,18,15,0.06)] rounded-xl font-medium transition-colors"
+                        className="focus-ring px-4 py-2 text-sm text-[color:var(--foreground)]/75 hover:bg-[color:var(--wash-2)] rounded-xl font-medium transition-colors"
                       >
                         Cancel
                       </button>
@@ -364,7 +364,7 @@ function MessageCard({
                       <button
                         onClick={onStartEdit}
                         disabled={isProcessing}
-                        className="focus-ring flex items-center gap-1.5 px-4 py-2 text-sm text-[color:var(--foreground)]/75 hover:bg-[color:rgba(20,18,15,0.06)] rounded-xl font-medium transition-colors disabled:opacity-50"
+                        className="focus-ring flex items-center gap-1.5 px-4 py-2 text-sm text-[color:var(--foreground)]/75 hover:bg-[color:var(--wash-2)] rounded-xl font-medium transition-colors disabled:opacity-50"
                       >
                         <Edit3 className="w-4 h-4" />
                         <span>Edit</span>
