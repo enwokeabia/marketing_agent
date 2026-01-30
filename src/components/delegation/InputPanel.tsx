@@ -46,10 +46,10 @@ export function InputPanel({
     <div className="w-full max-w-4xl mx-auto">
       {/* Header */}
       <div className="text-center mb-8">
-        <h1 className="text-4xl font-bold text-gray-900 mb-3">
+        <h1 className="font-display text-4xl sm:text-5xl leading-[1.05] mb-3">
           What would you like to delegate today?
         </h1>
-        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+        <p className="text-lg muted max-w-2xl mx-auto">
           Describe your outreach goal in plain English, and our AI will handle the rest—
           finding targets, personalizing messages, and preparing drafts for your approval.
         </p>
@@ -57,33 +57,33 @@ export function InputPanel({
 
       {/* Input Area */}
       <div className="relative">
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden">
+        <div className="surface rounded-3xl overflow-hidden">
           <textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="e.g., Reach out to 10 boutique hotels in NYC about wellness retreats"
-            className="w-full px-6 py-5 text-lg border-none focus:ring-0 resize-none outline-none"
+            className="w-full bg-transparent px-6 py-5 text-lg border-none focus:ring-0 resize-none outline-none placeholder:text-[color:var(--muted-2)]"
             rows={3}
             disabled={isProcessing}
           />
           
           {/* Divider */}
-          <div className="border-t border-gray-100" />
+          <div className="h-px w-full bg-[var(--border)]" />
           
           {/* Actions */}
-          <div className="flex items-center justify-between px-4 py-3 bg-gray-50">
+          <div className="flex items-center justify-between px-4 py-3 bg-[color:var(--wash)]">
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setShowExamples(!showExamples)}
-                className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+                className="focus-ring flex items-center gap-1.5 px-3 py-1.5 text-sm text-[color:var(--foreground)]/80 hover:text-[color:var(--foreground)] hover:bg-[color:var(--wash-2)] rounded-xl transition-colors"
               >
                 <Sparkles className="w-4 h-4" />
                 <span>Examples</span>
               </button>
               
-              <span className="text-xs text-gray-400">
-                Press ⌘ + Enter to submit
+              <span className="hidden sm:inline text-xs muted">
+                Press <span className="font-mono">⌘</span> + <span className="font-mono">Enter</span> to submit
               </span>
             </div>
             
@@ -91,12 +91,12 @@ export function InputPanel({
               onClick={handleSubmit}
               disabled={!input.trim() || isProcessing}
               className={`
-                flex items-center gap-2 px-6 py-2.5 rounded-xl font-medium text-white
-                transition-all duration-200
+                focus-ring flex items-center gap-2 px-6 py-2.5 rounded-2xl font-medium
+                transition-all duration-200 will-change-transform
                 ${
                   !input.trim() || isProcessing
-                    ? 'bg-gray-300 cursor-not-allowed'
-                    : 'bg-blue-600 hover:bg-blue-700 shadow-md hover:shadow-lg'
+                    ? 'bg-[color:var(--wash-2)] text-[color:var(--muted)] cursor-not-allowed'
+                    : 'bg-[color:rgba(152,255,44,0.18)] hover:bg-[color:rgba(152,255,44,0.26)] text-[color:var(--foreground)] shadow-[0_18px_50px_rgba(152,255,44,0.14)] hover:translate-y-[-1px]'
                 }
               `}
             >
@@ -117,18 +117,18 @@ export function InputPanel({
 
         {/* Examples Dropdown */}
         {showExamples && (
-          <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden z-10">
-            <div className="px-4 py-3 bg-gray-50 border-b border-gray-100">
-              <h3 className="text-sm font-medium text-gray-700">Try one of these examples:</h3>
+          <div className="absolute top-full left-0 right-0 mt-3 surface-solid rounded-2xl overflow-hidden z-10">
+            <div className="px-4 py-3 bg-[color:var(--wash)] border-b border-[var(--border)]">
+              <h3 className="text-sm font-medium text-[color:var(--foreground)]/85">Try one of these examples:</h3>
             </div>
             <div className="max-h-64 overflow-y-auto">
               {recentExamples.map((example, index) => (
                 <button
                   key={index}
                   onClick={() => handleExampleClick(example)}
-                  className="w-full px-4 py-3 text-left hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-0"
+                  className="focus-ring w-full px-4 py-3 text-left hover:bg-[color:var(--wash)] transition-colors border-b border-[var(--border)] last:border-0"
                 >
-                  <p className="text-sm text-gray-700 line-clamp-2">{example}</p>
+                  <p className="text-sm text-[color:var(--foreground)]/80 line-clamp-2">{example}</p>
                 </button>
               ))}
             </div>
@@ -137,17 +137,17 @@ export function InputPanel({
       </div>
 
       {/* Quick Stats */}
-      <div className="flex items-center justify-center gap-8 mt-8">
-        <div className="flex items-center gap-2 text-sm text-gray-600">
-          <div className="w-2 h-2 rounded-full bg-green-500" />
+      <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 mt-8">
+        <div className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface-2)] px-4 py-2 text-sm text-[color:var(--foreground)]/80 shadow-[var(--shadow-2)]">
+          <div className="w-2 h-2 rounded-full bg-[color:rgba(152,255,44,0.95)]" />
           <span>Targets found automatically</span>
         </div>
-        <div className="flex items-center gap-2 text-sm text-gray-600">
-          <div className="w-2 h-2 rounded-full bg-blue-500" />
+        <div className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface-2)] px-4 py-2 text-sm text-[color:var(--foreground)]/80 shadow-[var(--shadow-2)]">
+          <div className="w-2 h-2 rounded-full bg-[color:rgba(255,176,32,0.95)]" />
           <span>Messages personalized per target</span>
         </div>
-        <div className="flex items-center gap-2 text-sm text-gray-600">
-          <div className="w-2 h-2 rounded-full bg-purple-500" />
+        <div className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface-2)] px-4 py-2 text-sm text-[color:var(--foreground)]/80 shadow-[var(--shadow-2)]">
+          <div className="w-2 h-2 rounded-full bg-[color:rgba(255,59,48,0.80)]" />
           <span>One-click approval</span>
         </div>
       </div>
@@ -171,8 +171,8 @@ interface IntentPreviewProps {
 
 function IntentPreview({ intent, onConfirm }: IntentPreviewProps) {
   return (
-    <div className="mt-8 p-6 bg-gray-50 rounded-xl border border-gray-200">
-      <h3 className="text-sm font-medium text-gray-700 mb-4">
+    <div className="mt-8 p-6 surface-solid rounded-2xl">
+      <h3 className="text-sm font-medium text-[color:var(--foreground)]/85 mb-4">
         Detected Intent (Confidence: {Math.round(intent.confidence * 100)}%)
       </h3>
       
@@ -202,12 +202,12 @@ function IntentPreview({ intent, onConfirm }: IntentPreviewProps) {
       {(intent.location || intent.targetNiche) && (
         <div className="flex flex-wrap gap-2 mb-4">
           {intent.location && (
-            <span className="px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-sm">
+            <span className="px-3 py-1 bg-[color:rgba(255,176,32,0.18)] text-[color:var(--foreground)] rounded-full text-sm border border-[color:rgba(255,176,32,0.22)]">
               📍 {intent.location}
             </span>
           )}
           {intent.targetNiche && (
-            <span className="px-3 py-1 bg-pink-100 text-pink-700 rounded-full text-sm">
+            <span className="px-3 py-1 bg-[color:rgba(255,59,48,0.10)] text-[color:var(--foreground)] rounded-full text-sm border border-[color:rgba(255,59,48,0.16)]">
               ✨ {intent.targetNiche}
             </span>
           )}
@@ -216,13 +216,13 @@ function IntentPreview({ intent, onConfirm }: IntentPreviewProps) {
       
       {intent.suggestions && intent.suggestions.length > 0 && (
         <div className="mb-4">
-          <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">
+          <h4 className="text-xs font-medium muted uppercase tracking-[0.16em] mb-2">
             Suggestions
           </h4>
           <ul className="space-y-1">
             {intent.suggestions.map((suggestion, i) => (
-              <li key={i} className="text-sm text-gray-600 flex items-center gap-2">
-                <ArrowRight className="w-3 h-3 text-gray-400" />
+              <li key={i} className="text-sm muted flex items-center gap-2">
+                <ArrowRight className="w-3 h-3 text-[color:var(--muted-2)]" />
                 {suggestion}
               </li>
             ))}
@@ -232,7 +232,7 @@ function IntentPreview({ intent, onConfirm }: IntentPreviewProps) {
       
       <button
         onClick={onConfirm}
-        className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-medium transition-colors"
+        className="focus-ring w-full flex items-center justify-center gap-2 px-4 py-3 rounded-2xl font-medium transition bg-[color:rgba(152,255,44,0.18)] hover:bg-[color:rgba(152,255,44,0.26)] text-[color:var(--foreground)] shadow-[0_18px_50px_rgba(152,255,44,0.14)]"
       >
         <span>Start Campaign</span>
         <ArrowRight className="w-4 h-4" />
@@ -249,11 +249,11 @@ interface IntentBadgeProps {
 
 function IntentBadge({ label, value, color }: IntentBadgeProps) {
   const colorClasses: Record<string, string> = {
-    blue: 'bg-blue-50 text-blue-700 border-blue-200',
-    purple: 'bg-purple-50 text-purple-700 border-purple-200',
-    green: 'bg-green-50 text-green-700 border-green-200',
-    orange: 'bg-orange-50 text-orange-700 border-orange-200',
-    pink: 'bg-pink-50 text-pink-700 border-pink-200',
+    blue: 'bg-[color:rgba(255,176,32,0.10)] text-[color:var(--foreground)] border-[color:rgba(255,176,32,0.18)]',
+    purple: 'bg-[color:var(--wash-2)] text-[color:var(--foreground)] border-[var(--border)]',
+    green: 'bg-[color:rgba(152,255,44,0.12)] text-[color:var(--foreground)] border-[color:rgba(152,255,44,0.20)]',
+    orange: 'bg-[color:rgba(255,176,32,0.12)] text-[color:var(--foreground)] border-[color:rgba(255,176,32,0.20)]',
+    pink: 'bg-[color:rgba(255,59,48,0.08)] text-[color:var(--foreground)] border-[color:rgba(255,59,48,0.16)]',
   };
   
   return (

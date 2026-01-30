@@ -106,12 +106,12 @@ export function ActionButton({
           onClick={handleSend}
           disabled={approvedCount === 0 || isProcessing || actionStatus === 'loading'}
           className={`
-            flex items-center gap-2 px-6 py-3 rounded-xl font-medium text-white
-            transition-all duration-200
+            focus-ring flex items-center gap-2 px-6 py-3 rounded-2xl font-medium
+            transition-all duration-200 will-change-transform
             ${
               approvedCount === 0 || isProcessing
-                ? 'bg-gray-300 cursor-not-allowed'
-                : 'bg-blue-600 hover:bg-blue-700 shadow-lg hover:shadow-xl'
+                ? 'bg-[color:var(--wash-2)] text-[color:var(--muted)] cursor-not-allowed'
+                : 'bg-[color:rgba(152,255,44,0.18)] hover:bg-[color:rgba(152,255,44,0.26)] text-[color:var(--foreground)] shadow-[0_18px_50px_rgba(152,255,44,0.14)] hover:translate-y-[-1px]'
             }
           `}
         >
@@ -127,19 +127,19 @@ export function ActionButton({
 
         {/* Dropdown Menu */}
         {showMenu && (
-          <div className="absolute top-full right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden z-20">
+          <div className="absolute top-full right-0 mt-3 w-60 surface-solid rounded-2xl overflow-hidden z-20">
             <button
               onClick={() => {
                 handleSend();
                 setShowMenu(false);
               }}
               disabled={approvedCount === 0 || isProcessing}
-              className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-gray-50 transition-colors disabled:opacity-50"
+              className="focus-ring w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-[color:var(--wash)] transition-colors disabled:opacity-50"
             >
-              <Send className="w-5 h-5 text-blue-600" />
+              <Send className="w-5 h-5 text-[color:var(--foreground)]/80" />
               <div>
-                <p className="font-medium text-gray-900">Send Now</p>
-                <p className="text-sm text-gray-500">Deliver immediately</p>
+                <p className="font-medium text-[color:var(--foreground)]">Send Now</p>
+                <p className="text-sm muted">Deliver immediately</p>
               </div>
             </button>
             
@@ -149,12 +149,12 @@ export function ActionButton({
                 setShowMenu(false);
               }}
               disabled={approvedCount === 0 || isProcessing}
-              className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-gray-50 transition-colors disabled:opacity-50"
+              className="focus-ring w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-[color:var(--wash)] transition-colors disabled:opacity-50"
             >
-              <Calendar className="w-5 h-5 text-purple-600" />
+              <Calendar className="w-5 h-5 text-[color:var(--foreground)]/80" />
               <div>
-                <p className="font-medium text-gray-900">Schedule</p>
-                <p className="text-sm text-gray-500">Pick a send time</p>
+                <p className="font-medium text-[color:var(--foreground)]">Schedule</p>
+                <p className="text-sm muted">Pick a send time</p>
               </div>
             </button>
             
@@ -164,17 +164,17 @@ export function ActionButton({
                 setShowMenu(false);
               }}
               disabled={approvedCount === 0 || isProcessing}
-              className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-gray-50 transition-colors disabled:opacity-50"
+              className="focus-ring w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-[color:var(--wash)] transition-colors disabled:opacity-50"
             >
-              <Download className="w-5 h-5 text-green-600" />
+              <Download className="w-5 h-5 text-[color:var(--foreground)]/80" />
               <div>
-                <p className="font-medium text-gray-900">Export</p>
-                <p className="text-sm text-gray-500">Download as CSV/JSON</p>
+                <p className="font-medium text-[color:var(--foreground)]">Export</p>
+                <p className="text-sm muted">Download as CSV/JSON</p>
               </div>
             </button>
             
-            <div className="border-t border-gray-100 pt-2 pb-2">
-              <p className="px-4 py-2 text-xs text-gray-500 uppercase tracking-wide">
+            <div className="border-t border-[var(--border)] pt-2 pb-2">
+              <p className="px-4 py-2 text-xs muted uppercase tracking-[0.18em]">
                 Integrations
               </p>
               
@@ -183,10 +183,10 @@ export function ActionButton({
                   // Would trigger n8n/Zapier webhook
                   setShowMenu(false);
                 }}
-                className="w-full flex items-center gap-3 px-4 py-2 text-left hover:bg-gray-50 transition-colors"
+                className="focus-ring w-full flex items-center gap-3 px-4 py-2 text-left hover:bg-[color:var(--wash)] transition-colors"
               >
-                <ExternalLink className="w-4 h-4 text-gray-400" />
-                <span className="text-sm text-gray-600">Send via n8n</span>
+                <ExternalLink className="w-4 h-4 text-[color:var(--muted-2)]" />
+                <span className="text-sm muted">Send via n8n</span>
               </button>
               
               <button
@@ -194,10 +194,10 @@ export function ActionButton({
                   // Would trigger Zapier webhook
                   setShowMenu(false);
                 }}
-                className="w-full flex items-center gap-3 px-4 py-2 text-left hover:bg-gray-50 transition-colors"
+                className="focus-ring w-full flex items-center gap-3 px-4 py-2 text-left hover:bg-[color:var(--wash)] transition-colors"
               >
-                <ExternalLink className="w-4 h-4 text-gray-400" />
-                <span className="text-sm text-gray-600">Send via Zapier</span>
+                <ExternalLink className="w-4 h-4 text-[color:var(--muted-2)]" />
+                <span className="text-sm muted">Send via Zapier</span>
               </button>
             </div>
           </div>
@@ -258,12 +258,12 @@ function ScheduleModal({
   const defaultTime = '09:00';
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 overflow-hidden">
+    <div className="fixed inset-0 bg-black/55 flex items-center justify-center z-50">
+      <div className="surface-solid rounded-3xl w-full max-w-md mx-4 overflow-hidden">
         {/* Header */}
-        <div className="px-6 py-4 border-b border-gray-100">
-          <h2 className="text-xl font-semibold text-gray-900">Schedule Messages</h2>
-          <p className="text-sm text-gray-600 mt-1">
+        <div className="px-6 py-4 border-b border-[var(--border)]">
+          <h2 className="font-display text-2xl">Schedule Messages</h2>
+          <p className="text-sm muted mt-1">
             Choose when to send your approved messages
           </p>
         </div>
@@ -272,7 +272,7 @@ function ScheduleModal({
         <div className="p-6 space-y-4">
           {/* Date Selection */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-[color:var(--foreground)]/85 mb-2">
               Send Date
             </label>
             <input
@@ -280,26 +280,26 @@ function ScheduleModal({
               value={selectedDate || today}
               onChange={(e) => onDateChange(e.target.value)}
               min={today}
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="focus-ring w-full px-4 py-2.5 border border-[var(--border-2)] bg-[var(--surface-solid)] rounded-2xl outline-none"
             />
           </div>
 
           {/* Time Selection */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-[color:var(--foreground)]/85 mb-2">
               Send Time
             </label>
             <input
               type="time"
               value={selectedTime || defaultTime}
               onChange={(e) => onTimeChange(e.target.value)}
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="focus-ring w-full px-4 py-2.5 border border-[var(--border-2)] bg-[var(--surface-solid)] rounded-2xl outline-none"
             />
           </div>
 
           {/* Quick Options */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-[color:var(--foreground)]/85 mb-2">
               Quick Select
             </label>
             <div className="grid grid-cols-3 gap-2">
@@ -310,7 +310,7 @@ function ScheduleModal({
                   onDateChange(tomorrow.toISOString().split('T')[0]);
                   onTimeChange('09:00');
                 }}
-                className="px-3 py-2 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+                className="focus-ring px-3 py-2 text-sm border border-[var(--border)] bg-[color:var(--wash)] hover:bg-[color:var(--wash-2)] rounded-xl transition-colors"
               >
                 Tomorrow 9AM
               </button>
@@ -321,7 +321,7 @@ function ScheduleModal({
                   onDateChange(nextWeek.toISOString().split('T')[0]);
                   onTimeChange('09:00');
                 }}
-                className="px-3 py-2 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+                className="focus-ring px-3 py-2 text-sm border border-[var(--border)] bg-[color:var(--wash)] hover:bg-[color:var(--wash-2)] rounded-xl transition-colors"
               >
                 Next Week
               </button>
@@ -332,7 +332,7 @@ function ScheduleModal({
                   onDateChange(nextMonth.toISOString().split('T')[0]);
                   onTimeChange('09:00');
                 }}
-                className="px-3 py-2 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+                className="focus-ring px-3 py-2 text-sm border border-[var(--border)] bg-[color:var(--wash)] hover:bg-[color:var(--wash-2)] rounded-xl transition-colors"
               >
                 Next Month
               </button>
@@ -340,18 +340,18 @@ function ScheduleModal({
           </div>
 
           {/* Timezone Info */}
-          <div className="flex items-center gap-2 text-sm text-gray-500">
+          <div className="flex items-center gap-2 text-sm muted">
             <Calendar className="w-4 h-4" />
             <span>Times are in your local timezone (EST)</span>
           </div>
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-end gap-3 px-6 py-4 bg-gray-50 border-t border-gray-100">
+        <div className="flex items-center justify-end gap-3 px-6 py-4 bg-[color:var(--wash)] border-t border-[var(--border)]">
           <button
             onClick={onCancel}
             disabled={isProcessing}
-            className="px-4 py-2 text-sm text-gray-600 hover:bg-gray-200 rounded-lg font-medium transition-colors disabled:opacity-50"
+            className="focus-ring px-4 py-2 text-sm text-[color:var(--foreground)]/75 hover:bg-[color:var(--wash-2)] rounded-xl font-medium transition-colors disabled:opacity-50"
           >
             Cancel
           </button>
@@ -359,12 +359,12 @@ function ScheduleModal({
             onClick={onConfirm}
             disabled={isProcessing || !selectedDate || !selectedTime}
             className={`
-              flex items-center gap-2 px-4 py-2 text-sm text-white rounded-lg font-medium
+              focus-ring flex items-center gap-2 px-4 py-2 text-sm rounded-xl font-medium
               transition-colors
               ${
                 isProcessing || !selectedDate || !selectedTime
-                  ? 'bg-gray-300 cursor-not-allowed'
-                  : 'bg-blue-600 hover:bg-blue-700'
+                  ? 'bg-[color:var(--wash-2)] text-[color:var(--muted)] cursor-not-allowed'
+                  : 'bg-[color:rgba(152,255,44,0.18)] hover:bg-[color:rgba(152,255,44,0.26)] text-[color:var(--foreground)]'
               }
             `}
           >
@@ -400,7 +400,7 @@ export function ChannelSelector({
 
   return (
     <div className="space-y-2">
-      <label className="block text-sm font-medium text-gray-700">
+      <label className="block text-sm font-medium text-[color:var(--foreground)]/85">
         Send Channel
       </label>
       <div className="grid grid-cols-3 gap-3">
@@ -414,24 +414,24 @@ export function ChannelSelector({
               onClick={() => onChange(channel.id)}
               disabled={disabled}
               className={`
-                flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all
+                focus-ring flex flex-col items-center gap-2 p-4 rounded-2xl border transition-all
                 ${
                   isSelected
-                    ? 'border-blue-500 bg-blue-50'
-                    : 'border-gray-200 hover:border-gray-300 bg-white'
+                    ? 'border-[color:rgba(152,255,44,0.45)] bg-[color:rgba(152,255,44,0.10)]'
+                    : 'border-[var(--border)] hover:border-[var(--border-2)] bg-[var(--surface-solid)]'
                 }
                 ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
               `}
             >
-              <Icon className={`w-6 h-6 ${isSelected ? 'text-blue-600' : 'text-gray-400'}`} />
-              <span className={`font-medium ${isSelected ? 'text-blue-900' : 'text-gray-700'}`}>
+              <Icon className={`w-6 h-6 ${isSelected ? 'text-[color:var(--foreground)]' : 'text-[color:var(--muted-2)]'}`} />
+              <span className={`font-medium ${isSelected ? 'text-[color:var(--foreground)]' : 'text-[color:var(--foreground)]/80'}`}>
                 {channel.name}
               </span>
             </button>
           );
         })}
       </div>
-      <p className="text-xs text-gray-500">
+      <p className="text-xs muted">
         {channels.find(c => c.id === selectedChannel)?.description}
       </p>
     </div>
@@ -456,7 +456,7 @@ export function ExportOptions({ onExport, disabled = false }: ExportOptionsProps
 
   return (
     <div className="space-y-2">
-      <label className="block text-sm font-medium text-gray-700">
+      <label className="block text-sm font-medium text-[color:var(--foreground)]/85">
         Export Format
       </label>
       <div className="grid grid-cols-3 gap-3">
@@ -469,13 +469,13 @@ export function ExportOptions({ onExport, disabled = false }: ExportOptionsProps
               onClick={() => onExport(format.id as 'csv' | 'json' | 'vcard')}
               disabled={disabled}
               className={`
-                flex flex-col items-center gap-2 p-4 rounded-xl border border-gray-200 
-                hover:border-gray-300 hover:bg-gray-50 transition-all
+                focus-ring flex flex-col items-center gap-2 p-4 rounded-2xl border border-[var(--border)] 
+                hover:border-[var(--border-2)] hover:bg-[color:var(--wash)] transition-all
                 disabled:opacity-50 disabled:cursor-not-allowed
               `}
             >
-              <Icon className="w-5 h-5 text-gray-400" />
-              <span className="font-medium text-gray-700">{format.name}</span>
+              <Icon className="w-5 h-5 text-[color:var(--muted-2)]" />
+              <span className="font-medium text-[color:var(--foreground)]/85">{format.name}</span>
             </button>
           );
         })}
