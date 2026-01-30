@@ -28,6 +28,8 @@ export async function POST(request: NextRequest) {
     });
     
     if (result.success) {
+      const avgQuality = result.progress.data?.avgQuality ?? 0;
+
       return NextResponse.json({
         success: true,
         data: {
@@ -39,7 +41,7 @@ export async function POST(request: NextRequest) {
           stats: {
             targetsFound: result.campaign?.targets?.length || 0,
             messagesGenerated: result.campaign?.messages?.length || 0,
-            avgQuality: result.progress.data?.avgQuality || 0,
+            avgQuality,
           },
         },
         meta: {

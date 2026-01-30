@@ -3,7 +3,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { parseIntent, validateIntent } from '@/lib/agents/intentParser';
 import { runAgent } from '@/lib/agents/orchestrator';
-import { processConversationReply, createNewCampaignContext } from '@/lib/agents/conversationManager';
+import { processConversationReply } from '@/lib/agents/conversationManager';
 import { sendWhatsAppMessage } from '@/lib/integrations/whatsapp';
 
 // ============================================
@@ -109,7 +109,7 @@ async function handleNewCampaign(
       input: userMessage,
       userId,
       onProgress: (progress) => {
-        console.log(`Progress for ${userId}:`, progress.status);
+        console.log(`Progress for ${userId}:`, progress.stage, progress.message);
       },
     });
     
@@ -117,6 +117,10 @@ async function handleNewCampaign(
       const intent = parsedIntent;
       const targetCount = result.campaign?.targets?.length || intent.count;
       const messageCount = result.campaign?.messages?.length || intent.count;
+      const messages = result.campaign?.messages || [];
+      const avgQuality = messages.length > 0
+        ? Math.round(messages.reduce((sum, m) => sum + m.qualityScore, 0) / messages.length * 100)
+        : 85;
       
       return `✅ Got it, ${profileName}! 🎯
 
@@ -127,7 +131,7 @@ async function handleNewCampaign(
 • Targets found: ${targetCount}
 • Messages generated: ${messageCount}
 
-Quality Score: ${Math.round(result.campaign?.messages?.reduce((sum, m) => sum + m.qualityScore, 0) / (messageCount || 1) * 100) || 85}%
+Quality Score: ${avgQuality}%
 
 ━━━━━━━━━━━━━━━━━━━━━━
 What would you like to do?

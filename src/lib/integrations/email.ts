@@ -59,7 +59,7 @@ export async function sendWithResend(params: SendEmailParams): Promise<SendResul
       subject: params.subject,
       html: params.html,
       text: params.text,
-      reply_to: params.replyTo,
+      replyTo: params.replyTo,
     });
     
     console.log(`✅ Email sent via Resend: ${result.data?.id}`);

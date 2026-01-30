@@ -15,6 +15,8 @@ import {
   searchTargets, 
   generateBulkEmails,
   handleConversation,
+  IntentResult,
+  TargetResult,
 } from './openaiClient';
 import { 
   createCampaign as dbCreateCampaign,
@@ -55,6 +57,39 @@ function formatIntentForAI(parsed: ParsedIntent): OutreachIntent {
     purposeDescription: parsed.purposeDescription,
     count: parsed.count,
     tone: parsed.tone,
+  };
+}
+
+function formatIntentFromResult(result: IntentResult): OutreachIntent {
+  return {
+    channel: result.channel as OutreachIntent['channel'],
+    targetType: result.targetType as OutreachIntent['targetType'],
+    targetNiche: result.niche,
+    location: result.location,
+    purpose: result.purpose as OutreachIntent['purpose'],
+    purposeDescription: result.purpose,
+    count: result.count,
+    tone: 'professional',
+  };
+}
+
+function mapTargetResultToTarget(r: TargetResult, index: number): Target {
+  const dataQuality: Target['dataQuality'] =
+    r.relevanceScore >= 0.8 ? 'high' : r.relevanceScore >= 0.5 ? 'medium' : 'low';
+  return {
+    id: `target_${Date.now()}_${index}`,
+    name: r.name,
+    title: r.title,
+    company: r.company,
+    website: r.website,
+    email: r.email,
+    phone: r.phone,
+    location: r.location,
+    description: r.description,
+    source: r.source,
+    relevanceScore: r.relevanceScore,
+    dataQuality,
+    discoveredAt: new Date(),
   };
 }
 
@@ -155,14 +190,12 @@ export async function parseInputNode(state: AgentState): Promise<Partial<AgentSt
   
   try {
     // Parse the intent
-    const parsedIntent = parseIntent(state.rawInput);
+    const parsedIntent = await parseIntent(state.rawInput);
     
-    // Validate the parsed intent
-    const validation = validateIntent(parsedIntent);
-    
-    if (!validation.valid) {
+    // Check if parsing was successful
+    if (!parsedIntent.success) {
       return {
-        error: `Intent parsing failed: ${validation.errors.join(', ')}`,
+        error: parsedIntent.clarification || 'Failed to parse intent',
         progress: {
           ...state.progress,
           status: 'error',
@@ -170,7 +203,7 @@ export async function parseInputNode(state: AgentState): Promise<Partial<AgentSt
             id: 'parse_input',
             name: 'Parse Input',
             status: 'failed',
-            message: validation.errors.join(', '),
+            message: parsedIntent.clarification || 'Intent parsing failed',
             completedAt: new Date(),
           }],
           updatedAt: new Date(),
@@ -178,19 +211,33 @@ export async function parseInputNode(state: AgentState): Promise<Partial<AgentSt
       };
     }
     
-    // Select channel
-    const intent = formatIntentForAI(parsedIntent);
+    // Convert to OutreachIntent
+    const intent = formatIntentFromResult(parsedIntent);
     const channelRecommendation = selectChannel(intent);
     
     // If channel was generic, use the recommendation
     if (intent.channel === 'generic') {
-      intent.channel = channelRecommendation.channel;
+      intent.channel = channelRecommendation.channel as OutreachIntent['channel'];
     }
     
     const parseTime = Date.now() - startTime;
     
+    // Convert IntentResult to ParsedIntent format
+    const parsed: ParsedIntent = {
+      rawInput: state.rawInput,
+      channel: parsedIntent.channel as ParsedIntent['channel'],
+      targetType: parsedIntent.targetType as ParsedIntent['targetType'],
+      targetNiche: parsedIntent.niche,
+      location: parsedIntent.location,
+      purpose: parsedIntent.purpose,
+      purposeDescription: parsedIntent.purpose,
+      count: parsedIntent.count,
+      tone: 'professional',
+      confidence: parsedIntent.confidence,
+    };
+    
     return {
-      parsedIntent,
+      parsedIntent: parsed,
       validatedIntent: intent,
       channelRecommendation,
       progress: {
@@ -259,13 +306,14 @@ export async function discoverTargetsNode(state: AgentState): Promise<Partial<Ag
     const intent = state.validatedIntent;
     
     // Search for targets using OpenAI
-    const targets = await searchTargets({
+    const rawTargets = await searchTargets({
       targetType: intent.targetType,
       location: intent.location,
       niche: intent.targetNiche,
       purpose: intent.purpose,
       count: intent.count,
     });
+    const targets: Target[] = rawTargets.map(mapTargetResultToTarget);
     
     const discoveryTime = Date.now() - startTime;
     
@@ -506,8 +554,8 @@ async function saveCampaignToDatabase(
   try {
     const dbCampaign = await dbCreateCampaign({
       name: campaign.name,
-      intent: campaign.intent as Record<string, unknown>,
-      settings: campaign.settings as Record<string, unknown>,
+      intent: campaign.intent as unknown as Record<string, unknown>,
+      settings: campaign.settings as unknown as Record<string, unknown>,
     });
     
     const dbCampaignId = dbCampaign.id;
@@ -582,6 +630,14 @@ async function updateCampaignInDatabase(
 // Main Agent Runner
 // ============================================
 
+/** Progress payload when stage is 'complete' */
+export interface RunAgentProgressData {
+  targets?: number;
+  emails?: number;
+  avgQuality?: number;
+  processingTime?: number;
+}
+
 export interface RunAgentParams {
   input: string;
   userId?: string;
@@ -600,7 +656,7 @@ export async function runAgent(params: RunAgentParams): Promise<{
     stage: string;
     message: string;
     progress: number;
-    data?: unknown;
+    data?: RunAgentProgressData;
   };
   error?: string;
 }> {
@@ -657,14 +713,15 @@ export async function runAgent(params: RunAgentParams): Promise<{
       });
     }
     
-    const targets = await searchTargets({
+    const rawTargets = await searchTargets({
       targetType: intentResult.targetType,
       location: intentResult.location,
       niche: intentResult.niche,
       purpose: intentResult.purpose,
       count: intentResult.count,
     });
-    
+    const targets: Target[] = rawTargets.map(mapTargetResultToTarget);
+
     if (targets.length === 0) {
       return {
         success: false,
@@ -725,37 +782,11 @@ export async function runAgent(params: RunAgentParams): Promise<{
           tone: 'professional',
         },
         status: 'pending_approval',
-        targets: targets.map((t, i) => ({
-          id: `target_${i}`,
-          name: t.name,
-          title: t.title,
-          company: t.company,
-          website: t.website,
-          email: t.email,
-          phone: t.phone,
-          location: t.location,
-          description: t.description,
-          source: t.source,
-          relevanceScore: t.relevanceScore,
-          dataQuality: t.email !== 'not found' ? 'high' : 'medium',
-          discoveredAt: new Date(),
-        })),
+        targets,
         messages: emails.map((e, i) => ({
           id: `msg_${i}`,
-          targetId: `target_${i}`,
-          target: {
-            id: `target_${i}`,
-            name: targets[i].name,
-            title: targets[i].title,
-            company: targets[i].company,
-            website: targets[i].website,
-            email: targets[i].email,
-            location: targets[i].location,
-            source: targets[i].source,
-            relevanceScore: targets[i].relevanceScore,
-            dataQuality: 'medium',
-            discoveredAt: new Date(),
-          },
+          targetId: targets[i].id,
+          target: targets[i],
           channel: intentResult.channel as 'email' | 'dm' | 'whatsapp' | 'generic',
           subject: e.subject,
           body: e.body,
