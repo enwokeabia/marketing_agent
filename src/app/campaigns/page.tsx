@@ -31,48 +31,89 @@ export default function CampaignPage() {
       const result = await response.json();
       
       if (result.success) {
-        // Use the actual campaign data from the API
         const apiData = result.data;
         
-        // Transform the API response into a Campaign
-        const newCampaign: Campaign = {
-          id: apiData.campaignId || `campaign_${Date.now()}`,
-          name: `Campaign: ${input.substring(0, 50)}...`,
-          intent: {
-            channel: 'email',
-            targetType: 'generic',
-            purpose: 'general',
-            purposeDescription: 'outreach',
-            count: apiData.stats?.targetsFound || 3,
-            tone: 'professional',
-          },
-          status: 'pending_approval',
-          targets: [],
-          messages: [],
-          stats: {
-            totalTargets: apiData.stats?.targetsFound || 0,
-            approvedMessages: 0,
-            sentMessages: 0,
-            deliveredMessages: 0,
-            openedMessages: 0,
-            clickedMessages: 0,
-            repliedMessages: 0,
-            bouncedMessages: 0,
-            failedMessages: 0,
-          },
-          settings: {
-            channel: 'email',
-            followUpEnabled: true,
-            followUpDelay: 72,
-            followUpMaxAttempts: 3,
-            trackOpens: true,
-            trackClicks: true,
-          },
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        };
-        
-        setCampaign(newCampaign);
+        // Use the campaign data from the API if available
+        if (apiData.campaign) {
+          // Transform the API campaign to our Campaign type
+          const apiCampaign = apiData.campaign;
+          const newCampaign: Campaign = {
+            id: apiCampaign.id || apiData.campaignId || `campaign_${Date.now()}`,
+            name: apiCampaign.name || `Campaign: ${input.substring(0, 50)}...`,
+            intent: apiCampaign.intent || {
+              channel: 'email' as const,
+              targetType: 'generic' as const,
+              purpose: 'general' as const,
+              purposeDescription: 'outreach',
+              count: apiData.stats?.targetsFound || 3,
+              tone: 'professional' as const,
+            },
+            status: apiCampaign.status || 'pending_approval',
+            targets: apiCampaign.targets || [],
+            messages: apiCampaign.messages || [],
+            stats: apiCampaign.stats || {
+              totalTargets: apiData.stats?.targetsFound || 0,
+              approvedMessages: 0,
+              sentMessages: 0,
+              deliveredMessages: 0,
+              openedMessages: 0,
+              clickedMessages: 0,
+              repliedMessages: 0,
+              bouncedMessages: 0,
+              failedMessages: 0,
+            },
+            settings: apiCampaign.settings || {
+              channel: 'email' as const,
+              followUpEnabled: true,
+              followUpDelay: 72,
+              followUpMaxAttempts: 3,
+              trackOpens: true,
+              trackClicks: true,
+            },
+            createdAt: apiCampaign.createdAt ? new Date(apiCampaign.createdAt) : new Date(),
+            updatedAt: apiCampaign.updatedAt ? new Date(apiCampaign.updatedAt) : new Date(),
+          };
+          setCampaign(newCampaign);
+        } else {
+          // Fallback if no campaign data (legacy/simplified response)
+          const newCampaign: Campaign = {
+            id: apiData.campaignId || `campaign_${Date.now()}`,
+            name: `Campaign: ${input.substring(0, 50)}...`,
+            intent: {
+              channel: 'email' as const,
+              targetType: 'generic' as const,
+              purpose: 'general' as const,
+              purposeDescription: 'outreach',
+              count: apiData.stats?.targetsFound || 3,
+              tone: 'professional' as const,
+            },
+            status: 'pending_approval',
+            targets: [],
+            messages: [],
+            stats: {
+              totalTargets: apiData.stats?.targetsFound || 0,
+              approvedMessages: 0,
+              sentMessages: 0,
+              deliveredMessages: 0,
+              openedMessages: 0,
+              clickedMessages: 0,
+              repliedMessages: 0,
+              bouncedMessages: 0,
+              failedMessages: 0,
+            },
+            settings: {
+              channel: 'email' as const,
+              followUpEnabled: true,
+              followUpDelay: 72,
+              followUpMaxAttempts: 3,
+              trackOpens: true,
+              trackClicks: true,
+            },
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          };
+          setCampaign(newCampaign);
+        }
       } else {
         console.error('Agent error:', result.error);
         alert(`Error: ${result.error.message || 'Unknown error'}`);

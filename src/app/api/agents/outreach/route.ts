@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { runAgent, approveMessage, rejectMessage, updateMessageContent, launchCampaign } from '@/lib/agents/orchestrator';
+import { runAgent } from '@/lib/agents/orchestrator';
 
 // ============================================
 // POST - Run Agent
@@ -22,8 +22,8 @@ export async function POST(request: NextRequest) {
       input,
       userId,
       onProgress: (progress) => {
-        // In production, you could stream progress updates
-        console.log('Agent progress:', progress);
+        // Log progress for debugging
+        console.log(`[${progress.stage}] ${progress.message} (${progress.progress}%)`);
       },
     });
     
@@ -32,15 +32,18 @@ export async function POST(request: NextRequest) {
         success: true,
         data: {
           campaignId: result.campaign?.id,
-          progress: result.progress,
+          stage: result.progress.stage,
+          message: result.progress.message,
+          progress: result.progress.progress,
+          campaign: result.campaign,
           stats: {
             targetsFound: result.campaign?.targets?.length || 0,
             messagesGenerated: result.campaign?.messages?.length || 0,
+            avgQuality: result.progress.data?.avgQuality || 0,
           },
         },
         meta: {
           timestamp: new Date().toISOString(),
-          processingTime: Date.now() - new Date(result.progress.startedAt).getTime(),
         },
       });
     } else {
