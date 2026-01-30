@@ -1,0 +1,310 @@
+// Marketing Agent - Prisma Schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// Campaign Management
+// ============================================
+
+model Campaign {
+  id              String           @id @default(cuid())
+  name            String
+  intent          Json             // OutreachIntent as JSON
+  status          CampaignStatus   @default(DRAFT)
+  settings        Json?            // CampaignSettings as JSON
+  stats           Json?            // CampaignStats as JSON
+  
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  startedAt       DateTime?
+  completedAt     DateTime?
+  
+  targets         Target[]
+  messages        Message[]
+  followUpRules   FollowUpRule[]
+  followUpActions FollowUpAction[]
+  
+  @@index([status])
+  @@index([createdAt])
+}
+
+enum CampaignStatus {
+  DRAFT
+  DISCOVERING
+  GENERATING
+  PENDING_APPROVAL
+  ACTIVE
+  PAUSED
+  COMPLETED
+  CANCELLED
+}
+
+// ============================================
+// Target Management
+// ============================================
+
+model Target {
+  id              String           @id @default(cuid())
+  name            String
+  title           String?
+  company         String?
+  website         String?
+  email           String?
+  phone           String?
+  
+  // Social handles stored as JSON
+  socialHandles   Json?
+  
+  location        String?
+  niche           String?
+  description     String?
+  source          String
+  
+  relevanceScore  Float            @default(0)
+  dataQuality     DataQuality      @default(MEDIUM)
+  
+  // Intelligence data stored as JSON
+  companyData     Json?
+  enrichmentData  Json?
+  
+  discoveredAt    DateTime         @default(now())
+  enrichedAt      DateTime?
+  
+  campaignId      String
+  campaign        Campaign         @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  
+  messages        Message[]
+  
+  @@index([campaignId])
+  @@index([email])
+  @@index([company])
+  @@index([location])
+  @@index([niche])
+}
+
+enum DataQuality {
+  HIGH
+  MEDIUM
+  LOW
+}
+
+// ============================================
+// Message Management
+// ============================================
+
+model Message {
+  id              String         @id @default(cuid())
+  
+  // Message content
+  channel         Channel
+  subject         String?
+  body            String
+  tone            MessageTone
+  status          MessageStatus  @default(DRAFT)
+  
+  // Personalization data
+  personalization Json?          // PersonalizationPoints as JSON
+  
+  // Quality and tracking
+  qualityScore    Float          @default(0)
+  
+  // Send tracking
+  sentAt          DateTime?
+  deliveredAt     DateTime?
+  openedAt        DateTime?
+  clickedAt       DateTime?
+  bouncedAt       DateTime?
+  
+  // External IDs
+  externalId      String?        // ID from email/messaging provider
+  metadata        Json?
+  
+  // Relations
+  campaignId      String
+  campaign        Campaign       @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  targetId        String
+  target          Target         @relation(fields: [targetId], references: [id], onDelete: Cascade)
+  
+  followUpActions FollowUpAction[]
+  
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  
+  @@index([campaignId])
+  @@index([targetId])
+  @@index([status])
+  @@index([channel])
+}
+
+enum Channel {
+  EMAIL
+  DM
+  WHATSAPP
+  GENERIC
+}
+
+enum MessageTone {
+  PROFESSIONAL
+  CASUAL
+  DIRECT
+  FRIENDLY
+}
+
+enum MessageStatus {
+  DRAFT
+  APPROVED
+  PENDING
+  SENDING
+  SENT
+  DELIVERED
+  OPENED
+  CLICKED
+  REPLIED
+  BOUNCED
+  FAILED
+  CANCELLED
+}
+
+// ============================================
+// Follow-up Automation
+// ============================================
+
+model FollowUpRule {
+  id              String           @id @default(cuid())
+  trigger         FollowUpTrigger
+  delay           Int              // in hours
+  maxAttempts     Int              @default(3)
+  status          FollowUpRuleStatus @default(ACTIVE)
+  
+  // Follow-up message template
+  subject         String?
+  body            String
+  tone            MessageTone
+  
+  campaignId      String
+  campaign        Campaign         @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  
+  actions         FollowUpAction[]
+  
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  
+  @@index([campaignId])
+  @@index([status])
+}
+
+enum FollowUpTrigger {
+  UNOPENED_AFTER_DAYS
+  OPENED_NO_REPLY
+  CLICKED_NO_REPLY
+  BOUNCED
+  MANUAL
+}
+
+enum FollowUpRuleStatus {
+  ACTIVE
+  PAUSED
+  COMPLETED
+}
+
+model FollowUpAction {
+  id              String         @id @default(cuid())
+  scheduledAt     DateTime
+  status          FollowUpActionStatus @default(PENDING)
+  
+  // Result tracking
+  sentAt          DateTime?
+  error           String?
+  
+  // Relations
+  ruleId          String
+  rule            FollowUpRule   @relation(fields: [ruleId], references: [id], onDelete: Cascade)
+  messageId       String?
+  message         Message?       @relation(fields: [messageId], references: [id])
+  
+  createdAt       DateTime       @default(now())
+  
+  @@index([ruleId])
+  @@index([scheduledAt])
+  @@index([status])
+}
+
+enum FollowUpActionStatus {
+  PENDING
+  SENT
+  SKIPPED
+  FAILED
+}
+
+// ============================================
+// Integration Settings
+// ============================================
+
+model Integration {
+  id          String   @id @default(cuid())
+  name        String
+  channel     Channel
+  provider    String
+  credentials Json     // Encrypted credentials
+  settings    Json?
+  isEnabled   Boolean  @default(true)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@unique([channel, provider])
+}
+
+// ============================================
+// User Preferences
+// ============================================
+
+model UserPreference {
+  id                    String   @id @default(cuid())
+  userId                String   @unique
+  
+  // Default settings
+  defaultChannel        Channel?
+  defaultTone           MessageTone?
+  
+  // Notification settings
+  emailOnComplete       Boolean  @default(true)
+  emailOnReply          Boolean  @default(true)
+  slackWebhook          String?
+  
+  // Business info for signatures
+  senderName            String?
+  senderTitle           String?
+  senderCompany         String?
+  senderWebsite         String?
+  
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+}
+
+// ============================================
+// Audit Log
+// ============================================
+
+model AuditLog {
+  id          String   @id @default(cuid())
+  action      String
+  entityType  String
+  entityId    String
+  userId      String?
+  metadata    Json?
+  ipAddress   String?
+  
+  createdAt   DateTime @default(now())
+  
+  @@index([entityType, entityId])
+  @@index([createdAt])
+  @@index([action])
+}
