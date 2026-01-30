@@ -67,11 +67,11 @@ export function ApprovalQueue({
   if (messages.length === 0) {
     return (
       <div className="text-center py-12">
-        <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-          <Check className="w-8 h-8 text-gray-400" />
+        <div className="w-16 h-16 mx-auto mb-4 grid place-items-center rounded-2xl border border-[var(--border)] bg-[var(--surface-solid)] shadow-[var(--shadow-2)]">
+          <Check className="w-8 h-8 text-[color:var(--muted-2)]" />
         </div>
-        <h3 className="text-lg font-medium text-gray-900 mb-2">No messages to review</h3>
-        <p className="text-gray-600">
+        <h3 className="font-display text-xl mb-2">No messages to review</h3>
+        <p className="muted">
           Messages will appear here after the AI generates them based on your request.
         </p>
       </div>
@@ -83,10 +83,10 @@ export function ApprovalQueue({
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-semibold text-gray-900">
+          <h2 className="font-display text-2xl leading-tight">
             Approval Queue
           </h2>
-          <p className="text-sm text-gray-600 mt-1">
+          <p className="text-sm muted mt-1">
             {pendingMessages.length} pending, {approvedMessages.length} approved
           </p>
         </div>
@@ -96,7 +96,7 @@ export function ApprovalQueue({
             <button
               onClick={onApproveAll}
               disabled={isProcessing}
-              className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium transition-colors disabled:opacity-50"
+              className="focus-ring flex items-center gap-2 px-4 py-2 rounded-xl border border-[var(--border)] bg-[var(--surface-solid)] text-[color:var(--foreground)]/80 font-medium shadow-[var(--shadow-2)] hover:translate-y-[-1px] transition disabled:opacity-50 disabled:hover:translate-y-0"
             >
               <Check className="w-4 h-4" />
               <span>Approve All</span>
@@ -104,7 +104,7 @@ export function ApprovalQueue({
             <button
               onClick={onSendAll}
               disabled={isProcessing || approvedMessages.length === 0}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50"
+              className="focus-ring flex items-center gap-2 px-4 py-2 rounded-xl border border-[color:rgba(152,255,44,0.55)] bg-[color:rgba(152,255,44,0.18)] hover:bg-[color:rgba(152,255,44,0.26)] text-[color:var(--foreground)] font-medium shadow-[0_18px_50px_rgba(152,255,44,0.14)] hover:translate-y-[-1px] transition disabled:opacity-50 disabled:hover:translate-y-0"
             >
               <Send className="w-4 h-4" />
               <span>Send All ({approvedMessages.length})</span>
@@ -185,23 +185,27 @@ function MessageCard({
   const qualityColor = getQualityColor(message.qualityScore);
 
   return (
-    <div className={`bg-white rounded-xl border transition-all duration-200 ${
-      isExpanded ? 'border-blue-300 shadow-md' : 'border-gray-200 shadow-sm'
-    }`}>
+    <div
+      className={`rounded-2xl border transition-all duration-200 ${
+        isExpanded
+          ? 'bg-[var(--surface-solid)] border-[color:rgba(152,255,44,0.45)] shadow-[0_22px_60px_rgba(152,255,44,0.10)]'
+          : 'bg-[var(--surface)] border-[var(--border)] shadow-[var(--shadow-2)]'
+      }`}
+    >
       {/* Header */}
       <div 
-        className="flex items-center justify-between p-4 cursor-pointer hover:bg-gray-50 rounded-t-xl"
+        className="flex items-center justify-between p-4 cursor-pointer rounded-t-2xl hover:bg-[color:rgba(20,18,15,0.03)]"
         onClick={onToggleExpand}
       >
         <div className="flex items-center gap-4">
           {/* Target Info */}
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white font-medium">
+            <div className="w-10 h-10 rounded-2xl border border-[var(--border)] bg-[color:rgba(20,18,15,0.06)] flex items-center justify-center text-[color:var(--foreground)] font-medium shadow-[0_10px_28px_rgba(20,18,15,0.10)]">
               {target.name.charAt(0)}
             </div>
             <div>
-              <h3 className="font-medium text-gray-900">{target.name}</h3>
-              <p className="text-sm text-gray-500">
+              <h3 className="font-medium text-[color:var(--foreground)]">{target.name}</h3>
+              <p className="text-sm muted">
                 {target.title}{target.company ? ` at ${target.company}` : ''}
               </p>
             </div>
@@ -213,79 +217,79 @@ function MessageCard({
           </div>
           
           {/* Channel Badge */}
-          <div className="px-3 py-1 bg-gray-100 rounded-full text-xs font-medium text-gray-600 capitalize">
+          <div className="px-3 py-1 bg-[color:rgba(20,18,15,0.06)] border border-[var(--border)] rounded-full text-xs font-medium text-[color:var(--foreground)]/75 capitalize">
             {message.channel}
           </div>
         </div>
 
         <div className="flex items-center gap-2">
           {isExpanded ? (
-            <ChevronUp className="w-5 h-5 text-gray-400" />
+            <ChevronUp className="w-5 h-5 text-[color:var(--muted-2)]" />
           ) : (
-            <ChevronDown className="w-5 h-5 text-gray-400" />
+            <ChevronDown className="w-5 h-5 text-[color:var(--muted-2)]" />
           )}
         </div>
       </div>
 
       {/* Expanded Content */}
       {isExpanded && (
-        <div className="border-t border-gray-100">
+        <div className="border-t border-[var(--border)]">
           {/* Message Preview */}
           <div className="p-4">
             {message.subject && (
               <div className="mb-3">
-                <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                <span className="text-xs font-medium muted uppercase tracking-[0.18em]">
                   Subject
                 </span>
-                <p className="text-gray-900 font-medium">{message.subject}</p>
+                <p className="text-[color:var(--foreground)] font-medium">{message.subject}</p>
               </div>
             )}
             
             <div>
-              <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+              <span className="text-xs font-medium muted uppercase tracking-[0.18em]">
                 Message
               </span>
               {isEditing ? (
                 <textarea
                   value={editContent}
                   onChange={(e) => onEditChange(e.target.value)}
-                  className="w-full mt-2 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="focus-ring w-full mt-2 p-3 bg-[var(--surface-solid)] border border-[var(--border-2)] rounded-xl outline-none"
                   rows={6}
                 />
               ) : (
-                <p className="mt-2 text-gray-700 whitespace-pre-wrap">{message.body}</p>
+                <p className="mt-2 text-[color:var(--foreground)]/80 whitespace-pre-wrap leading-relaxed">{message.body}</p>
               )}
             </div>
 
             {/* Personalization Details */}
             {message.personalization && (
-              <div className="mt-4 p-3 bg-gray-50 rounded-lg">
-                <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">
+              <div className="mt-4 p-4 bg-[color:rgba(20,18,15,0.04)] border border-[var(--border)] rounded-xl">
+                <h4 className="text-xs font-medium muted uppercase tracking-[0.18em] mb-3">
                   Personalization Points
                 </h4>
                 <div className="flex flex-wrap gap-2">
                   {message.personalization.companyReference && (
-                    <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs">
+                    <span className="px-2.5 py-1 bg-[color:rgba(255,176,32,0.16)] text-[color:var(--foreground)] rounded-full text-xs border border-[color:rgba(255,176,32,0.22)]">
                       Company Reference
                     </span>
                   )}
                   {message.personalization.nicheSpecific && (
-                    <span className="px-2 py-1 bg-pink-100 text-pink-700 rounded text-xs">
+                    <span className="px-2.5 py-1 bg-[color:rgba(255,59,48,0.10)] text-[color:var(--foreground)] rounded-full text-xs border border-[color:rgba(255,59,48,0.16)]">
                       Niche Specific
                     </span>
                   )}
                   {message.personalization.locationSpecific && (
-                    <span className="px-2 py-1 bg-orange-100 text-orange-700 rounded text-xs">
+                    <span className="px-2.5 py-1 bg-[color:rgba(20,18,15,0.06)] text-[color:var(--foreground)] rounded-full text-xs border border-[var(--border)]">
                       Location Specific
                     </span>
                   )}
                   {message.personalization.recentNewsReference && (
-                    <span className="px-2 py-1 bg-green-100 text-green-700 rounded text-xs">
+                    <span className="px-2.5 py-1 bg-[color:rgba(152,255,44,0.12)] text-[color:var(--foreground)] rounded-full text-xs border border-[color:rgba(152,255,44,0.20)]">
                       News Reference
                     </span>
                   )}
                   {message.personalization.customHooks.map((hook, i) => (
-                    <span key={i} className="px-2 py-1 bg-purple-100 text-purple-700 rounded text-xs">
+                    <span key={i} className="px-2.5 py-1 bg-[color:rgba(20,18,15,0.06)] text-[color:var(--foreground)]/80 rounded-full text-xs border border-[var(--border)]">
                       {hook}
                     </span>
                   ))}
@@ -295,15 +299,15 @@ function MessageCard({
           </div>
 
           {/* Actions */}
-          <div className="flex items-center justify-between p-4 bg-gray-50 border-t border-gray-100 rounded-b-xl">
+          <div className="flex items-center justify-between p-4 bg-[color:rgba(20,18,15,0.03)] border-t border-[var(--border)] rounded-b-2xl">
             <div className="flex gap-2">
               <button
                 onClick={onCopy}
-                className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-200 rounded-lg transition-colors"
+                className="focus-ring flex items-center gap-1.5 px-3 py-1.5 text-sm text-[color:var(--foreground)]/80 hover:text-[color:var(--foreground)] hover:bg-[color:rgba(20,18,15,0.06)] rounded-xl transition-colors"
               >
                 {isCopied ? (
                   <>
-                    <CheckCircle className="w-4 h-4 text-green-500" />
+                    <CheckCircle className="w-4 h-4 text-[color:rgba(152,255,44,0.95)]" />
                     <span>Copied!</span>
                   </>
                 ) : (
@@ -319,7 +323,7 @@ function MessageCard({
                   href={target.website}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-200 rounded-lg transition-colors"
+                  className="focus-ring flex items-center gap-1.5 px-3 py-1.5 text-sm text-[color:var(--foreground)]/80 hover:text-[color:var(--foreground)] hover:bg-[color:rgba(20,18,15,0.06)] rounded-xl transition-colors"
                 >
                   <ExternalLink className="w-4 h-4" />
                   <span>Visit Website</span>
@@ -333,7 +337,7 @@ function MessageCard({
                   <button
                     onClick={onReject}
                     disabled={isProcessing}
-                    className="flex items-center gap-1.5 px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg font-medium transition-colors disabled:opacity-50"
+                    className="focus-ring flex items-center gap-1.5 px-4 py-2 text-sm text-[color:var(--foreground)] hover:bg-[color:rgba(255,59,48,0.10)] rounded-xl font-medium transition-colors disabled:opacity-50"
                   >
                     <X className="w-4 h-4" />
                     <span>Reject</span>
@@ -343,13 +347,13 @@ function MessageCard({
                     <>
                       <button
                         onClick={onCancelEdit}
-                        className="px-4 py-2 text-sm text-gray-600 hover:bg-gray-200 rounded-lg font-medium transition-colors"
+                        className="focus-ring px-4 py-2 text-sm text-[color:var(--foreground)]/75 hover:bg-[color:rgba(20,18,15,0.06)] rounded-xl font-medium transition-colors"
                       >
                         Cancel
                       </button>
                       <button
                         onClick={onSaveEdit}
-                        className="flex items-center gap-1.5 px-4 py-2 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
+                        className="focus-ring flex items-center gap-1.5 px-4 py-2 text-sm bg-[color:rgba(152,255,44,0.18)] hover:bg-[color:rgba(152,255,44,0.26)] text-[color:var(--foreground)] rounded-xl font-medium transition-colors"
                       >
                         <Check className="w-4 h-4" />
                         <span>Save & Approve</span>
@@ -360,7 +364,7 @@ function MessageCard({
                       <button
                         onClick={onStartEdit}
                         disabled={isProcessing}
-                        className="flex items-center gap-1.5 px-4 py-2 text-sm text-gray-600 hover:bg-gray-200 rounded-lg font-medium transition-colors disabled:opacity-50"
+                        className="focus-ring flex items-center gap-1.5 px-4 py-2 text-sm text-[color:var(--foreground)]/75 hover:bg-[color:rgba(20,18,15,0.06)] rounded-xl font-medium transition-colors disabled:opacity-50"
                       >
                         <Edit3 className="w-4 h-4" />
                         <span>Edit</span>
@@ -368,7 +372,7 @@ function MessageCard({
                       <button
                         onClick={onApprove}
                         disabled={isProcessing}
-                        className="flex items-center gap-1.5 px-4 py-2 text-sm bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50"
+                        className="focus-ring flex items-center gap-1.5 px-4 py-2 text-sm bg-[color:rgba(152,255,44,0.18)] hover:bg-[color:rgba(152,255,44,0.26)] text-[color:var(--foreground)] rounded-xl font-medium transition-colors disabled:opacity-50"
                       >
                         <Check className="w-4 h-4" />
                         <span>Approve</span>
@@ -380,7 +384,7 @@ function MessageCard({
                 <button
                   onClick={onSend}
                   disabled={isProcessing}
-                  className="flex items-center gap-1.5 px-4 py-2 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50"
+                  className="focus-ring flex items-center gap-1.5 px-4 py-2 text-sm bg-[color:rgba(152,255,44,0.18)] hover:bg-[color:rgba(152,255,44,0.26)] text-[color:var(--foreground)] rounded-xl font-medium transition-colors disabled:opacity-50"
                 >
                   <Send className="w-4 h-4" />
                   <span>Send Now</span>
@@ -400,10 +404,10 @@ function MessageCard({
 
 function getQualityColor(score: number): string {
   if (score >= 0.8) {
-    return 'bg-green-100 text-green-700';
+    return 'bg-[color:rgba(152,255,44,0.12)] text-[color:var(--foreground)] border border-[color:rgba(152,255,44,0.20)]';
   } else if (score >= 0.6) {
-    return 'bg-yellow-100 text-yellow-700';
+    return 'bg-[color:rgba(255,176,32,0.16)] text-[color:var(--foreground)] border border-[color:rgba(255,176,32,0.22)]';
   } else {
-    return 'bg-red-100 text-red-700';
+    return 'bg-[color:rgba(255,59,48,0.10)] text-[color:var(--foreground)] border border-[color:rgba(255,59,48,0.16)]';
   }
 }

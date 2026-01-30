@@ -210,8 +210,37 @@ export default function CampaignPage() {
     
     default:
       return (
-        <main className="min-h-screen bg-gray-50">
-          <div className="max-w-6xl mx-auto px-4 py-12">
+        <main className="min-h-screen">
+          <div className="max-w-6xl mx-auto px-4 py-10">
+            <header className="mb-10">
+              <div className="flex items-center justify-between gap-6">
+                <div className="flex items-center gap-4">
+                  <div className="relative">
+                    <div className="h-11 w-11 rounded-2xl border border-[var(--border)] bg-[var(--surface-solid)] shadow-[var(--shadow-2)]" />
+                    <div className="absolute inset-0 grid place-items-center">
+                      <div className="h-5 w-5 rounded-md bg-[var(--accent)] shadow-[0_10px_30px_rgba(152,255,44,0.25)]" />
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-xs tracking-[0.22em] uppercase muted">
+                      Marketing Agent
+                    </p>
+                    <h1 className="font-display text-2xl sm:text-3xl leading-tight">
+                      Delegate outreach. Review drafts. Send with confidence.
+                    </h1>
+                  </div>
+                </div>
+                <div className="hidden sm:block text-right">
+                  <p className="text-sm muted">
+                    Built for fast iterations, not busywork.
+                  </p>
+                  <p className="text-xs muted mt-1">
+                    Tip: <span className="font-mono">⌘</span> + <span className="font-mono">Enter</span> submits.
+                  </p>
+                </div>
+              </div>
+              <div className="mt-8 h-px w-full bg-[var(--border)]" />
+            </header>
             <InputPanel
               onSubmit={handleSubmit}
               isProcessing={isProcessing}
@@ -256,23 +285,24 @@ function ReviewStep({
   const approvedCount = campaign.messages.filter(m => m.status === 'approved').length;
 
   return (
-    <main className="min-h-screen bg-gray-50">
+    <main className="min-h-screen">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200">
+      <header className="sticky top-0 z-20 border-b hairline bg-[color:var(--background)]/75 backdrop-blur-xl">
         <div className="max-w-6xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <button
                 onClick={onBack}
-                className="text-gray-600 hover:text-gray-900 transition-colors"
+                className="focus-ring inline-flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--surface-solid)] px-3 py-2 text-sm font-medium text-[color:var(--foreground)] shadow-[var(--shadow-2)] hover:translate-y-[-1px] transition"
               >
-                ← Back
+                <span aria-hidden>←</span>
+                <span>Back</span>
               </button>
               <div>
-                <h1 className="text-xl font-semibold text-gray-900">
+                <h1 className="font-display text-xl sm:text-2xl leading-tight">
                   {campaign.name}
                 </h1>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm muted">
                   {campaign.messages.length} messages generated
                 </p>
               </div>
@@ -281,7 +311,7 @@ function ReviewStep({
             <div className="flex items-center gap-3">
               <button
                 onClick={onExport}
-                className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg font-medium transition-colors"
+                className="focus-ring hidden sm:inline-flex items-center rounded-xl border border-[var(--border)] bg-[var(--surface-solid)] px-4 py-2 text-sm font-medium text-[color:var(--foreground)] shadow-[var(--shadow-2)] hover:translate-y-[-1px] transition"
               >
                 Export
               </button>
@@ -321,15 +351,15 @@ function ReviewStep({
 
 function SendingStep() {
   return (
-    <main className="min-h-screen bg-gray-50 flex items-center justify-center">
-      <div className="text-center">
-        <div className="w-16 h-16 mx-auto mb-6 bg-blue-100 rounded-full flex items-center justify-center">
-          <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
+    <main className="min-h-screen flex items-center justify-center px-4">
+      <div className="surface-solid w-full max-w-lg rounded-3xl p-8 text-center">
+        <div className="mx-auto mb-6 grid h-16 w-16 place-items-center rounded-2xl border border-[var(--border)] bg-[var(--surface)] shadow-[var(--shadow-2)]">
+          <Loader2 className="w-8 h-8 text-[color:var(--foreground)]/80 animate-spin" />
         </div>
-        <h2 className="text-2xl font-semibold text-gray-900 mb-2">
+        <h2 className="font-display text-2xl mb-2">
           Sending Messages...
         </h2>
-        <p className="text-gray-600">
+        <p className="muted">
           Your messages are being delivered. This may take a moment.
         </p>
       </div>
@@ -350,18 +380,18 @@ function CompleteStep({ campaign, onNewCampaign }: CompleteStepProps) {
   const sentCount = campaign?.messages.filter(m => m.status === 'sent').length || 0;
 
   return (
-    <main className="min-h-screen bg-gray-50">
+    <main className="min-h-screen">
       <div className="max-w-2xl mx-auto px-4 py-16">
-        <div className="bg-white rounded-2xl shadow-lg p-8 text-center">
-          <div className="w-20 h-20 mx-auto mb-6 bg-green-100 rounded-full flex items-center justify-center">
-            <CheckCircle className="w-10 h-10 text-green-600" />
+        <div className="surface-solid rounded-3xl p-9 text-center">
+          <div className="mx-auto mb-6 grid h-20 w-20 place-items-center rounded-3xl border border-[var(--border)] bg-[color:rgba(152,255,44,0.14)] shadow-[0_22px_60px_rgba(152,255,44,0.12)]">
+            <CheckCircle className="w-10 h-10 text-[color:var(--accent-ink)]" />
           </div>
           
-          <h1 className="text-2xl font-bold text-gray-900 mb-3">
+          <h1 className="font-display text-3xl leading-tight mb-3">
             Campaign Sent Successfully!
           </h1>
           
-          <p className="text-gray-600 mb-8">
+          <p className="muted mb-8">
             {sentCount} messages have been delivered to your targets.
             We'll track opens and replies automatically.
           </p>
@@ -369,10 +399,10 @@ function CompleteStep({ campaign, onNewCampaign }: CompleteStepProps) {
           <div className="flex items-center justify-center gap-4">
             <button
               onClick={onNewCampaign}
-              className="flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-medium transition-colors"
+              className="focus-ring group inline-flex items-center gap-2 rounded-2xl border border-[color:rgba(152,255,44,0.55)] bg-[color:rgba(152,255,44,0.18)] px-6 py-3 font-medium text-[color:var(--foreground)] shadow-[0_18px_50px_rgba(152,255,44,0.14)] hover:bg-[color:rgba(152,255,44,0.24)] transition"
             >
               <span>Start New Campaign</span>
-              <ArrowRight className="w-5 h-5" />
+              <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-0.5" />
             </button>
           </div>
         </div>
